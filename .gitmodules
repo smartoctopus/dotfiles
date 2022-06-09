@@ -1,0 +1,3 @@
+[submodule "gdb-peda-pwndbg-gef"]
+	path = gdb-peda-pwndbg-gef
+	url = https://github.com/apogiatzis/gdb-peda-pwndbg-gef.git
