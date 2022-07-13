@@ -73,11 +73,15 @@
 ;; (load-theme 'modus-operandi t)
 (load-theme 'modus-vivendi t)
 
+;; Other Themes
 ;; (setq doom-theme 'doom-one)
 ;; (setq doom-theme 'nord)
 ;; (setq doom-theme 'gruvbox-dark-hard)
 
-;; Set custom keybindings
+;; Remove request to close buffer when running processes inside
+(setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+
+;; LSP formatting keybindings
 (map! :leader
       (:prefix ("l" . "lsp")
        :desc "Format current buffer" "f" #'lsp-format-buffer))
@@ -86,3 +90,31 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
+
+;; Floating terminal buffer
+(load! "~/.doom.d/floatbuf/floatbuf.el")
+(require 'floatbuf)
+
+(defvar terminal-toggle-var 0 "Internal variable used to toggle the floating terminal")
+
+(defun toggle-terminal ()
+  "Toggle a floating terminal"
+  (interactive)
+  (cond
+   ((= terminal-toggle-var 0)
+    (floatbuf-make-floatbuf-with-buffer (generate-new-buffer "floating-terminal"))
+    (select-frame-set-input-focus (frame-parameter (selected-frame) 'floatbuf-frame))
+    (vterm-mode)
+    (setq terminal-toggle-var 1))
+   ((= terminal-toggle-var 1)
+    (let
+        ((frame (frame-parameter (selected-frame) 'floatbuf-frame)))
+      (select-frame-set-input-focus (frame-parent frame)))
+    (floatbuf-delete-floatbuf)
+    (kill-buffer "floating-terminal")
+    (setq terminal-toggle-var 0)
+    )))
+
+(map! :leader
+      (:prefix ("a" . "applications")
+       :desc "Open a terminal" "t" #'toggle-terminal))
