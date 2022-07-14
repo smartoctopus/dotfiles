@@ -137,3 +137,6 @@
       (:prefix ("a" . "applications")
        :desc "Toggle a floating terminal" "t" #'toggle-terminal
        :desc "Toggle vterm" "T" #'toggle-vterm))
+
+;; GPG
+(pinentry-start)

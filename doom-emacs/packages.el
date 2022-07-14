@@ -52,3 +52,4 @@
 (package! gruvbox-theme)
 (package! nord-theme)
 (package! evil-tutor)
+(package! pinentry)
