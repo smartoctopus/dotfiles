@@ -81,6 +81,9 @@
 ;; Remove request to close buffer when running processes inside
 (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
 
+;; Fullscreen + maximized window
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
 ;; LSP formatting keybindings
 (map! :leader
       (:prefix ("l" . "lsp")
@@ -115,6 +118,22 @@
     (setq terminal-toggle-var 0)
     )))
 
+(defvar vterm-toggle-var 0 "Internal variable used to toggle vterm")
+
+(defun toggle-vterm ()
+  "Toggle vterm"
+  (interactive)
+  (cond
+   ((= vterm-toggle-var 0)
+    (vterm)
+    (setq vterm-toggle-var 1)
+    )
+   ((= vterm-toggle-var 1)
+    (kill-buffer-and-window)
+    (setq vterm-toggle-var 0)
+    )))
+
 (map! :leader
       (:prefix ("a" . "applications")
-       :desc "Open a terminal" "t" #'toggle-terminal))
+       :desc "Toggle a floating terminal" "t" #'toggle-terminal
+       :desc "Toggle vterm" "T" #'toggle-vterm))
