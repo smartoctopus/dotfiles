@@ -53,3 +53,4 @@
 (package! nord-theme)
 (package! evil-tutor)
 (package! pinentry)
+(package! platformio-mode)

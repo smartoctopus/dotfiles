@@ -94,6 +94,18 @@
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
 
+;; C++ mode settings
+(require 'platformio-mode)
+
+(defun my-c++-hook ()
+  (setq c++-tab-always-indent t)
+  (setq c-basic-offset 4)
+  (setq c-indent-level 4)
+  (setq indent-tabs-mode nil)
+  (platformio-conditionally-enable))
+
+(add-hook! 'c++-mode-hook 'my-c++-hook)
+
 ;; Floating terminal buffer
 (load! "~/.doom.d/floatbuf/floatbuf.el")
 (require 'floatbuf)

@@ -46,3 +46,16 @@ cd /home/$real_user
 rm -rf pinentry-1.1.0 pinentry-1.1.0.tar.bz2
 
 echo "pinentry-program /usr/local/bin/pinentry-emacs" > ~/.gnupg/gpg-agent.conf
+
+# Install usbip
+apt install linux-tools-virtual hwdata
+update-alternatives --install /usr/local/bin/usbip usbip `ls /usr/lib/linux-tools/*/usbip | tail -n1` 20
+
+# Install platformio
+apt install libncurses5
+wget https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -O get-platformio.py
+python3 get-platformio.py
+
+# Add udev rules
+curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/master/scripts/99-platformio-udev.rules | tee /etc/udev/rules.d/99-platformio-udev.rules
+service udev restart
