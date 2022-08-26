@@ -59,3 +59,13 @@ python3 get-platformio.py
 # Add udev rules
 curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/master/scripts/99-platformio-udev.rules | tee /etc/udev/rules.d/99-platformio-udev.rules
 service udev restart
+
+# Install toolchain
+# TODO: Check if we need to install other files
+apt install clang14 libclang14-dev ninja-build cmake
+
+# ccls (lsp for c/c++/objc)
+cd /home/$real_user
+git clone --depth=1 --recursive https://github.com/MaskRay/ccls
+cd ccls
+cmake -GNinja -H. -BRelease -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/lib/llvm-14 -DLLVM_INCLUDE_DIR=/usr/lib/llvm-14/include -DLLVM_BUILD_INCLUDE_DIR=/usr/include/llvm-14/ && cmake --build Release --target install
