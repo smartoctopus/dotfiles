@@ -13,6 +13,10 @@ else
     real_user=$(whoami)
 fi
 
+rel_directory="$(dirname $0)"
+cd "$rel_directory"
+directory="$(pwd)"
+
 # Update repos
 add-apt-repository ppa:kelleyk/emacs
 apt update
@@ -58,6 +62,7 @@ python3 get-platformio.py
 
 # Add udev rules
 curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/master/scripts/99-platformio-udev.rules | tee /etc/udev/rules.d/99-platformio-udev.rules
+cp $directory/50-myusb.rules /etc/udev/rules.d/
 service udev restart
 
 # Install toolchain
