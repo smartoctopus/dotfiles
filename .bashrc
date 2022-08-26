@@ -149,3 +149,9 @@ elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
 fi
 
 unset env
+
+# Start udev if not running
+sudo service udev restart > /dev/null 2>&1
+
+# PlatformIO
+alias serialmonitor="pio device monitor --port /dev/ttyUSB0 --filter send_on_enter"
