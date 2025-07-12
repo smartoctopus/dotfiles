@@ -2,7 +2,7 @@
 sudo pacman -Syu
 
 # Install various packages
-sudo pacman -S zed-editor flatpak reflector pacman-contrib
+sudo pacman -S zed-editor flatpak reflector pacman-contrib stow
 
 # Install `yay`
 sudo pacman -S --needed base-devel
