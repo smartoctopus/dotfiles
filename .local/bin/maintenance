@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+
+# Advanced Arch Linux Maintenance Script
+trap 'echo -e "\n\033[1;31mError occurred at line $LINENO\033[0m"' ERR
+
+# ---- User Configuration ----
+MIRROR_COUNT=20
+JOURNAL_VACUUM="2weeks"
+# ----------------------------
+
+# Enhanced colored output
+print_header() {
+    echo -e "\n\033[1;35m===== $1 =====\033[0m"
+}
+
+print_status() {
+    local color=$1; shift
+    local msg="$*"
+    local reset='\033[0m'
+    case $color in
+        green) color='\033[1;32m' ;;
+        yellow) color='\033[1;33m' ;;
+        red) color='\033[1;31m' ;;
+        *) color='' ;;
+    esac
+    echo -e "${color}==> $msg${reset}"
+}
+
+# System information
+show_system_info() {
+    print_header "SYSTEM INFORMATION"
+    echo -e "Arch: \033[1;34m$(uname -m)\033[0m"
+    echo -e "Kernel: \033[1;34m$(uname -r)\033[0m"
+    echo -e "Uptime: \033[1;34m$(uptime -p)\033[0m"
+    echo -e "Last Update: \033[1;34m$(date -r /var/lib/pacman/local '++%Y-%m-%d %H:%M:%S')\033[0m"
+}
+
+# Mirrorlist optimization
+update_mirrorlist() {
+    print_header "MIRROR OPTIMIZATION"
+    local COUNTRY
+    COUNTRY=$(curl -sfL https://ipapi.co/country 2>/dev/null || \
+              curl -sfL https://ipinfo.io/country 2>/dev/null || \
+              echo "US")
+
+    print_status yellow "Using fastest $MIRROR_COUNT mirrors from $COUNTRY"
+
+    sudo reflector \
+        --protocol https \
+        --country "$COUNTRY" \
+        --latest $MIRROR_COUNT \
+        --sort rate \
+        --age 12 \
+        --fastest 10 \
+        --save /etc/pacman.d/mirrorlist
+
+    print_status green "Mirrorlist updated"
+}
+
+# Package management
+system_update() {
+    print_header "SYSTEM UPDATE"
+
+    sudo pacman -Sy --needed --noconfirm archlinux-keyring
+    yay -Syu --needed --noconfirm
+}
+
+# Cache cleaning
+clean_caches() {
+    print_header "SYSTEM CLEANUP"
+
+    # Package caches
+    sudo paccache -r
+    sudo paccache -ruk0
+    yay -Sc --noconfirm
+
+    # User caches
+    find ~/.cache/ -type f -atime +30 -delete
+    sudo rm -rf /root/.cache/*
+
+    # System caches
+    sudo rm -rf /var/cache/man/*
+    sudo rm -rf /var/cache/ldconfig/*
+}
+
+# Orphan package removal
+remove_orphans() {
+    print_header "ORPHAN PACKAGE CLEANUP"
+    local orphans
+    orphans=$(pacman -Qtdq)
+
+    if [[ -n "$orphans" ]]; then
+        echo "$orphans" | sudo pacman -Rns --noconfirm -
+        print_status green "Orphans removed"
+    else
+        print_status green "No orphans found"
+    fi
+}
+
+# Flatpak maintenance
+flatpak_maintenance() {
+    if ! command -v flatpak &>/dev/null; then
+        print_status yellow "Flatpak not installed - skipping"
+        return
+    fi
+
+    print_header "FLATPAK MAINTENANCE"
+    flatpak uninstall --unused -y
+    flatpak update -y
+    flatpak repair --system
+    flatpak repair --user
+}
+
+# Journal maintenance
+clean_journal() {
+    print_header "JOURNAL MAINTENANCE"
+    sudo journalctl --vacuum-time=$JOURNAL_VACUUM
+    sudo journalctl --vacuum-size=200M
+    sudo systemctl restart systemd-journald
+}
+
+# System health report
+system_health_report() {
+    print_header "SYSTEM HEALTH REPORT"
+
+    # Failed services
+    local failed_services
+    failed_services=$(systemctl --failed --no-legend --no-pager | awk '{print $1}')
+    if [[ -n "$failed_services" ]]; then
+        print_status red "Failed services:"
+        column <<< "$failed_services"
+    else
+        print_status green "No failed services"
+    fi
+
+    # Disk space warning
+    local disk_usage
+    disk_usage=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
+    if (( disk_usage > 90 )); then
+        print_status red "High disk usage: $disk_usage%"
+    fi
+}
+
+main() {
+    print_header "ARCH LINUX MAINTENANCE STARTED"
+    show_system_info
+    update_mirrorlist
+    system_update
+    clean_caches
+    remove_orphans
+    flatpak_maintenance
+    clean_journal
+
+    system_health_report
+    echo -e "\n\033[1;32mMaintenance completed successfully!\033[0m"
+    echo -e "\nNext steps:"
+    echo "1. Review the system health report above"
+    echo "2. Reboot if kernel was updated"
+    echo "3. Check applications for unusual behavior"
+}
+
+# Execution
+if [[ $EUID -eq 0 ]]; then
+    echo "This script should not be run as root" >&2
+    exit 1
+fi
+
+main
