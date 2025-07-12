@@ -10,6 +10,5 @@ Install Arch Linux through `archinstall` with the following options:
 ## Dotfiles Installation
 
 ```sh
-chmod +x install.sh
 ./install.sh
 ```
