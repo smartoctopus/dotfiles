@@ -13,6 +13,9 @@ export HISTCONTROL=ignoredups:erasedup
 # PATH
 export PATH="$HOME/.local/bin:$PATH"
 
+# GPG
+export GPG_TTY=$(tty)
+
 # Core aliases
 alias ..='cd ..'
 alias ls='ls --color=auto'
