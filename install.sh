@@ -16,6 +16,13 @@ rm -rf yay
 # NOTE: Do not install through `flatpak` in order to take advantage of Firefox's native sandbox features
 yay -S librewolf-bin
 
+# Install `brave`
+# NOTE: Do not install through `flatpak` in order to take advantage of Chromium's native sandbox features
+yay -S brave-bin
+
+# Install `localsend`
+yay -S localsend-bin
+
 # Install flatpak packages
 flatpak install --user flathub md.obsidian.Obsidian
 flatpak override --user --socket=wayland md.obsidian.Obsidian
@@ -31,6 +38,7 @@ sudo pacman -S cups ghostscript
 yay -S kyocera-ecosys-p5021cdw
 sudo systemctl enable cups
 sudo systemctl start cups
+# Setup thorugh http://localhost:631/ (search ppd file in /usr/share/ppd)
 
 # Install mise-en-place
 curl https://mise.run | sh
