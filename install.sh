@@ -2,7 +2,7 @@
 sudo pacman -Syu
 
 # Install various packages
-sudo pacman -S zed-editor flatpak reflector pacman-contrib stow
+sudo pacman -S zed-editor flatpak reflector pacman-contrib stow python-pycryptodomex
 
 # Install `yay`
 sudo pacman -S --needed base-devel
@@ -19,6 +19,12 @@ yay -S librewolf-bin
 # Install flatpak packages
 flatpak install --user flathub md.obsidian.Obsidian
 flatpak override --user --socket=wayland md.obsidian.Obsidian
+
+# Install yt-dlp
+wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O ~/.local/bin/yt-dlp
+chmod a+rx ~/.local/bin/yt-dlp
+mkdir -p ~/.config/yt-dlp/plugins
+git clone https://github.com/Blu-Tiger/StreamingCommunity-yt-dlp-plugin.git ~/.config/yt-dlp/plugins/StreamingCommunity-yt-dlp-plugin
 
 # Install mise-en-place
 curl https://mise.run | sh
