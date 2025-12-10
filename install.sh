@@ -26,6 +26,12 @@ chmod a+rx ~/.local/bin/yt-dlp
 mkdir -p ~/.config/yt-dlp/plugins
 git clone https://github.com/Blu-Tiger/StreamingCommunity-yt-dlp-plugin.git ~/.config/yt-dlp/plugins/StreamingCommunity-yt-dlp-plugin
 
+# Setup printers
+sudo pacman -S cups ghostscript
+yay -S kyocera-ecosys-p5021cdw
+sudo systemctl enable cups
+sudo systemctl start cups
+
 # Install mise-en-place
 curl https://mise.run | sh
 
