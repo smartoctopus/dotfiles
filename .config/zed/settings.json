@@ -19,5 +19,26 @@
     "mode": "system",
     "light": "Catppuccin Mocha",
     "dark": "One Dark"
+  },
+  "languages": {
+    "Templ": {
+      "language_servers": [
+        "templ",
+        "tailwindcss-language-server",
+        "vscode-html-language-server"
+      ]
+    }
+  },
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "includeLanguages": {
+          "templ": "html"
+        },
+        "experimental": {
+          "classRegex": ["class=\"([^\"]*)\"", "className=\"([^\"]*)\""]
+        }
+      }
+    }
   }
 }
