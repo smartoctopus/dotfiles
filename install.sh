@@ -2,7 +2,10 @@
 sudo pacman -Syu
 
 # Install various packages
-sudo pacman -S zed-editor flatpak reflector pacman-contrib stow python-pycryptodomex
+sudo pacman -S zed-editor flatpak reflector pacman-contrib stow python-pycryptodomex qt5-wayland qt6-wayland keepassxc grub-btrfs snap-pac
+
+# Enable grub-btrfs
+sudo systemctl enable grub-btrfsd
 
 # Install `yay`
 sudo pacman -S --needed base-devel
